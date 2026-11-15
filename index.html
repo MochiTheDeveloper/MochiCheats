@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MochiCheats — Game Loaders</title>
+<meta name="description" content="MochiCheats — game loaders for The Forest, Sons of the Forest and Phasmophobia. Made by MochiTheDev.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DOWNLOADS — change file names / versions / status here
+     (the exe files sit in the same folder as this page)
+     ============================================================ */
+  :root{
+    --red:#e5203a; --red-d:#8f1424; --red-glow:rgba(229,32,58,.35);
+    --bg0:#050505; --bg1:#0b0b0b; --bg2:#111; --box:#141414;
+    --line:#232323; --line2:#2e2e2e;
+    --txt:#e6e6e6; --dim:#8a8a8a; --mute:#555;
+    --ok:#39d36a; --warn:#ffcc4d;
+    --mono:'JetBrains Mono',Consolas,monospace;
+    --head:'Rajdhani','Verdana',sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg0);color:var(--txt);font-family:var(--body);font-size:15px;line-height:1.6;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(900px 500px at 80% -10%,rgba(229,32,58,.13),transparent 60%),
+      radial-gradient(700px 400px at -10% 30%,rgba(229,32,58,.06),transparent 60%),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px);}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  .mono{font-family:var(--mono)}
+  .red{color:var(--red)}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:.6}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:700;font-size:22px;letter-spacing:.5px}
+  .logo img{width:34px;height:34px;filter:drop-shadow(0 0 8px var(--red-glow))}
+  .fbanner{height:44px;width:auto;display:block}
+  .logo b{color:var(--red);font-weight:700}
+  .links{display:flex;gap:26px;font-family:var(--head);font-weight:600;font-size:15px;letter-spacing:1px;text-transform:uppercase}
+  .links a{color:var(--dim);transition:color .15s}
+  .links a:hover{color:var(--txt)}
+  .btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--head);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;font-size:15px;padding:12px 22px;border:1px solid var(--line2);background:#161616;color:var(--txt);cursor:pointer;transition:all .15s;position:relative}
+  .btn:hover{border-color:#444;background:#1d1d1d}
+  .btn.primary{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 0 1px var(--red-d) inset,0 6px 24px -6px var(--red-glow)}
+  .btn.primary:hover{background:#f23147;box-shadow:0 0 0 1px var(--red-d) inset,0 8px 30px -4px var(--red-glow)}
+  .btn.sm{padding:8px 14px;font-size:13px}
+  .btn svg{width:16px;height:16px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:96px 0 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--dim);border:1px solid var(--line2);padding:6px 12px;background:var(--bg1)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  h1{font-family:var(--head);font-weight:700;font-size:64px;line-height:1;letter-spacing:-.5px;margin:22px 0 18px;text-transform:uppercase}
+  h1 span{color:var(--red);text-shadow:0 0 30px var(--red-glow)}
+  .lead{color:var(--dim);font-size:17px;max-width:520px}
+  .cta{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+  .stats{display:flex;gap:36px;margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
+  .stats div b{display:block;font-family:var(--head);font-size:28px;font-weight:700}
+  .stats div span{font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:1px}
+
+
+  .ok{color:var(--ok)} .warn{color:var(--warn)}
+
+  /* hero video */
+  .video{border:1px solid var(--line2);background:var(--bg1);box-shadow:0 30px 80px -20px #000}
+  .video-frame{position:relative;aspect-ratio:16/9;background:#070707;border-bottom:2px solid var(--red)}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .video-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--mute);font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+  .video-empty svg{width:54px;height:54px;color:var(--red);padding:14px;border:1px solid var(--line2);background:#0d0d0d}
+  .video-cap{display:flex;justify-content:space-between;padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--mute)}
+  .video-cap span:first-child{color:var(--red)}
+
+  /* offsets */
+  .off{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  .off-card{border:1px solid var(--line);background:var(--bg1);padding:24px}
+  .off-card h3{font-family:var(--head);font-size:24px;font-weight:700;text-transform:uppercase}
+  .off-card p{color:var(--dim);font-size:14px;margin:6px 0 16px}
+  .off-files{list-style:none;display:grid;gap:8px;margin-bottom:20px}
+  .off-files li{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--line);background:#0a0a0a}
+  .off-files li span:last-child{color:var(--mute)}
+  .off-side{border:1px solid var(--line);border-left:2px solid var(--warn);background:var(--bg1);padding:22px;font-size:14px;color:var(--dim)}
+  .off-side b{color:var(--txt)}
+  .off-side ol{padding-left:18px;margin-top:10px;display:grid;gap:6px}
+
+  /* ---------- sections ---------- */
+  section{padding:80px 0;position:relative}
+  .sh{display:flex;align-items:end;justify-content:space-between;margin-bottom:34px;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:2px;text-transform:uppercase}
+  h2{font-family:var(--head);font-size:42px;font-weight:700;text-transform:uppercase;line-height:1.05;margin-top:6px}
+  .sh p{color:var(--dim);max-width:420px}
+
+  /* products */
+  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:linear-gradient(180deg,#121212,#0c0c0c);border:1px solid var(--line);padding:24px;position:relative;display:flex;flex-direction:column;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#3a1a1f;transform:translateY(-3px)}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent)}
+  .card .top{display:flex;justify-content:space-between;align-items:start;margin-bottom:18px}
+  .gicon{width:46px;height:46px;border:1px solid var(--line2);display:grid;place-items:center;background:#0a0a0a;font-family:var(--head);font-weight:700;font-size:18px;color:var(--red)}
+  .pill{font-family:var(--mono);font-size:10.5px;padding:4px 9px;border:1px solid;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
+  .pill.ok{border-color:rgba(57,211,106,.35);color:var(--ok);background:rgba(57,211,106,.06)}
+  .pill.warn{border-color:rgba(255,204,77,.35);color:var(--warn);background:rgba(255,204,77,.06)}
+  .pill.red{border-color:rgba(229,32,58,.4);color:var(--red);background:rgba(229,32,58,.06)}
+  .card h3{font-family:var(--head);font-size:26px;font-weight:700;text-transform:uppercase;line-height:1.1}
+  .card .sub{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin:4px 0 14px}
+  .card p{color:var(--dim);font-size:14px;margin-bottom:16px}
+  .card ul{list-style:none;margin-bottom:22px;display:grid;gap:7px}
+  .card li{font-size:13.5px;color:#bdbdbd;padding-left:18px;position:relative}
+  .card li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border:1px solid var(--red);transform:rotate(45deg)}
+  .card .foot{margin-top:auto;display:flex;gap:10px;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--line)}
+  .card .meta{font-family:var(--mono);font-size:11px;color:var(--mute);line-height:1.5}
+
+  /* status */
+  .status{border:1px solid var(--line);background:var(--bg1)}
+  .status-head,.status-row{display:grid;grid-template-columns:1.4fr .8fr .8fr 1.2fr 1fr;align-items:center;padding:14px 20px;gap:12px}
+  .status-head{font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:1.4px;border-bottom:1px solid var(--line);background:#0d0d0d}
+  .status-row{border-bottom:1px solid var(--line);font-size:14px}
+  .status-row:last-child{border-bottom:0}
+  .status-row b{font-family:var(--head);font-size:18px;font-weight:700;letter-spacing:.3px}
+  .status-row .m{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+  .bar{height:4px;background:#1c1c1c;position:relative;overflow:hidden}
+  .bar i{position:absolute;inset:0;background:var(--ok);transform-origin:left}
+  .status-note{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-top:14px}
+
+  /* features tabs */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:28px;overflow-x:auto}
+  .tab{font-family:var(--head);font-weight:700;font-size:16px;letter-spacing:1.2px;text-transform:uppercase;padding:14px 22px;color:var(--mute);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;background:none;border-top:0;border-left:0;border-right:0}
+  .tab:hover{color:var(--dim)}
+  .tab.on{color:var(--txt);border-bottom-color:var(--red)}
+  .panel{display:none}
+  .panel.on{display:block;animation:fade .25s}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}}
+  .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .fbox{border:1px solid var(--line);background:var(--bg1)}
+  .fbox h4{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+  .fbox h4 span{color:var(--mute)}
+  .fbox ul{list-style:none;padding:10px 16px 14px}
+  .fbox li{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:6px 0;border-bottom:1px dashed #1c1c1c;color:#c8c8c8}
+  .fbox li:last-child{border-bottom:0}
+  .fbox li kbd,.k{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line2);padding:1px 6px;background:#0a0a0a;white-space:nowrap;height:fit-content}
+  .fbox li.no{color:var(--mute);text-decoration:line-through;text-decoration-color:#3a3a3a}
+  .note{margin-top:18px;border:1px solid var(--line);border-left:2px solid var(--warn);padding:14px 18px;background:var(--bg1);font-size:14px;color:var(--dim)}
+  .note b{color:var(--txt)}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .mode{border:1px solid var(--line);background:var(--bg1);padding:18px 20px}
+  .mode h5{font-family:var(--head);font-size:20px;text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:10px}
+  .mode p{color:var(--dim);font-size:14px;margin-top:6px}
+
+  /* install */
+  .install-switch{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:12px;padding:8px 14px;border:1px solid var(--line2);color:var(--dim);cursor:pointer;background:var(--bg1)}
+  .chip.on{border-color:var(--red);color:var(--txt);background:rgba(229,32,58,.08)}
+  .steps{display:grid;gap:12px}
+  .step{display:grid;grid-template-columns:56px 1fr;border:1px solid var(--line);background:var(--bg1)}
+  .step .n{display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:22px;color:var(--red);border-right:1px solid var(--line);background:#0d0d0d}
+  .step div:last-child{padding:16px 20px}
+  .step h6{font-family:var(--head);font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .step p{color:var(--dim);font-size:14px;margin-top:2px}
+  code{font-family:var(--mono);font-size:12.5px;color:#f0a3ad;background:#1a0d10;border:1px solid #2c1418;padding:1px 6px}
+  .req{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+
+  /* changelog */
+  .log{border-left:1px solid var(--line2);margin-left:8px}
+  .entry{position:relative;padding:0 0 30px 30px}
+  .entry::before{content:"";position:absolute;left:-6px;top:6px;width:11px;height:11px;background:var(--bg0);border:2px solid var(--red);transform:rotate(45deg)}
+  .entry .eh{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .entry .v{font-family:var(--head);font-size:22px;font-weight:700}
+  .entry .g{font-family:var(--mono);font-size:11.5px;color:var(--mute)}
+  .entry ul{list-style:none;margin-top:8px;display:grid;gap:5px}
+  .entry li{font-size:14px;color:#bdbdbd}
+  .entry li em{font-style:normal;font-family:var(--mono);font-size:10.5px;padding:1px 6px;margin-right:8px;border:1px solid}
+  em.add{color:var(--ok);border-color:rgba(57,211,106,.35)!important}
+  em.chg{color:var(--warn);border-color:rgba(255,204,77,.35)!important}
+  em.fix{color:#6fb6ff;border-color:rgba(111,182,255,.35)!important}
+
+  /* faq */
+  .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  details{border:1px solid var(--line);background:var(--bg1)}
+  details[open]{border-color:#3a1a1f}
+  summary{list-style:none;cursor:pointer;padding:16px 20px;font-family:var(--head);font-weight:700;font-size:17px;letter-spacing:.3px;display:flex;justify-content:space-between;gap:14px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:var(--mono);color:var(--red);font-size:18px}
+  details[open] summary::after{content:"−"}
+  details p{padding:0 20px 18px;color:var(--dim);font-size:14px}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px;background:#070707;position:relative;z-index:1}
+  .fwrap{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:start}
+  .disc{max-width:620px;font-size:12.5px;color:var(--mute);margin-top:12px}
+  .fr{font-family:var(--mono);font-size:12px;color:var(--mute);text-align:right;line-height:1.9}
+
+  .toast{position:fixed;right:22px;bottom:22px;background:#0f0f0f;border:1px solid var(--line2);border-left:2px solid var(--red);padding:12px 16px;font-family:var(--mono);font-size:12px;color:var(--txt);transform:translateY(120%);opacity:0;transition:all .25s;z-index:99}
+  .toast.show{transform:none;opacity:1}
+
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr;padding-top:60px}
+    h1{font-size:46px}
+    .products,.fgrid,.off{grid-template-columns:1fr}
+    .faq,.modes{grid-template-columns:1fr}
+    .links{display:none}
+    .status-head{display:none}
+    .status-row{grid-template-columns:1fr 1fr;row-gap:8px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav">
+    <a href="#" class="logo"><img src="assets/icon.png" alt="">MOCHI<b>CHEATS</b></a>
+    <div class="links">
+      <a href="#products">Loaders</a>
+      <a href="#status">Status</a>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#changelog">Changelog</a>
+      <a href="#offsets">Offsets</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="#products" class="btn primary sm">Download</a>
+  </div>
+</nav>
+
+<header class="wrap hero">
+  <div>
+    <div class="tag"><span class="dot"></span>MULTIPLAYER SUPPORT · ALL THREE GAMES</div>
+    <h1>Take control<br>of <span>your game.</span></h1>
+    <p class="lead">Free loaders for The Forest, Sons of the Forest and Phasmophobia. Fly, ESP, items, radar, ghost info and more, all from a clean menu. All three games support multiplayer. Only Phasmophobia has an online Safety lock, which can be disabled in the MISC tab.</p>
+    <div class="cta">
+      <a href="#products" class="btn primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
+        Get the loaders
+      </a>
+      <a href="#features" class="btn">View features</a>
+    </div>
+    <div class="stats">
+      <div><b>3</b><span>Games</span></div>
+      <div><b>2</b><span>Loaders</span></div>
+      <div><b>Free</b><span>No key needed</span></div>
+    </div>
+  </div>
+
+  <div class="video">
+    <div class="video-frame" id="ytBox">
+      <div class="video-empty">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span>Showcase video coming soon</span>
+      </div>
+    </div>
+    <div class="video-cap"><span>// SHOWCASE</span><span id="ytCap">mochithedev</span></div>
+  </div>
+</header>
+
+<!-- ================= PRODUCTS ================= -->
+<section id="products">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// loaders</div><h2>Pick your game</h2></div>
+      <p>Two loaders, three games. Download the exe and run it. Both loaders ask for admin on start.</p>
+    </div>
+
+    <div class="products">
+      <div class="card">
+        <div class="top"><div class="gicon">TF</div><span class="pill ok">● Updated</span></div>
+        <h3>The Forest</h3>
+        <div class="sub">FOREST MENU · v3.2 · MONO INJECT</div>
+        <p>Injects the full in-game menu straight into the running game. Press Insert and go.</p>
+        <ul>
+          <li>Fly + noclip with 3 fly methods</li>
+          <li>ESP with chams, radar and enemy warning</li>
+          <li>Quick items, teleport, god mode</li>
+          <li>Game's own cheat flags + dev console</li>
+        </ul>
+        <div class="foot">
+          <div class="meta">Shared loader with SotF<br>Windows x64</div>
+          <a class="btn primary sm dl" data-file="forest">Download</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="top"><div class="gicon">SF</div><span class="pill warn">● Beta</span></div>
+        <h3>Sons of the Forest</h3>
+        <div class="sub">FOREST MENU · v3.2 · MEMORY / BEPINEX</div>
+        <p>Two modes: a no-install memory trainer, or the full in-game menu as a BepInEx plugin.</p>
+        <ul>
+          <li>Memory mode: god mode, fast running, give all items</li>
+          <li>Every dev command the game has, one click</li>
+          <li>Plugin mode: fly, ESP, items, radar, teleport</li>
+          <li>Kelvin &amp; Virginia in their own ESP colour</li>
+        </ul>
+        <div class="foot">
+          <div class="meta">Same exe as The Forest<br>Windows x64</div>
+          <a class="btn primary sm dl" data-file="forest">Download</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="top"><div class="gicon">PH</div><span class="pill ok">● Updated</span></div>
+        <h3>Phasmophobia</h3>
+        <div class="sub">PHASMO ESP · v3.0 · EXTERNAL OVERLAY</div>
+        <p>External, read-only overlay for both singleplayer and online contracts. Phasmophobia has an online Safety lock. Disable it in the MISC tab to use the ESP online.</p>
+        <ul>
+          <li>Boxes, skeleton, snaplines, off-screen arrows</li>
+          <li>Ghost type, evidence, speed and hunt warning</li>
+          <li>Radar with view cone</li>
+          <li>Stream proof (hidden from OBS / Discord)</li>
+        </ul>
+        <div class="foot">
+          <div class="meta">Standalone exe<br>Windows x64</div>
+          <a class="btn primary sm dl" data-file="phasmo">Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATUS ================= -->
+<section id="status">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// status</div><h2>Loader status</h2></div>
+      <p>Current version and state for every game.</p>
+    </div>
+    <div class="status">
+      <div class="status-head"><span>Game</span><span>Version</span><span>State</span><span>Method</span><span>Mode</span></div>
+      <div class="status-row">
+        <b>The Forest</b><span class="m">v3.2</span><span class="pill ok" style="width:fit-content">● Working</span>
+        <span class="m">Mono injection</span><span class="m">Singleplayer / Multiplayer</span>
+      </div>
+      <div class="status-row">
+        <b>Sons of the Forest</b><span class="m">v3.2</span><span class="pill warn" style="width:fit-content">● Beta</span>
+        <span class="m">Memory / BepInEx 6</span><span class="m">Singleplayer / Multiplayer</span>
+      </div>
+      <div class="status-row">
+        <b>Phasmophobia</b><span class="m">v3.0</span><span class="pill ok" style="width:fit-content">● Working</span>
+        <span class="m">External, read-only</span><span class="m">Online / Offline</span>
+      </div>
+    </div>
+    <div class="status-note">// Phasmophobia offsets are only needed once, and again after a new game update. The files are on this page — see <a href="#offsets" class="red">Offsets</a>.</div>
+  </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section id="features">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// features</div><h2>What's inside</h2></div>
+      <p>Everything listed here is in the current version. Keys can be rebound in the menu.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-tab="tf">The Forest</button>
+      <button class="tab" data-tab="sotf">Sons of the Forest</button>
+      <button class="tab" data-tab="ph">Phasmophobia</button>
+    </div>
+
+    <!-- The Forest -->
+    <div class="panel on" id="p-tf">
+      <div class="fgrid">
+        <div class="fbox"><h4>Movement <span>01</span></h4><ul>
+          <li>Fly <kbd>F</kbd></li>
+          <li>Noclip <kbd>N</kbd></li>
+          <li>3 fly methods (position lock / rigidbody / transform)</li>
+          <li>Live fly debug box</li>
+          <li>Teleport to where you look <kbd>T</kbd></li>
+          <li>Click teleport <kbd>MMB</kbd></li>
+          <li>Jump in the air</li>
+        </ul></div>
+        <div class="fbox"><h4>Visuals <span>02</span></h4><ul>
+          <li>ESP <kbd>F7</kbd></li>
+          <li>Chams (through walls)</li>
+          <li>Radar</li>
+          <li>Enemy warning</li>
+          <li>Custom colours</li>
+          <li>Zoom <kbd>Z</kbd></li>
+        </ul></div>
+        <div class="fbox"><h4>Player / World <span>03</span></h4><ul>
+          <li>God mode</li>
+          <li>Full sanity</li>
+          <li>Kill animals</li>
+          <li>Freeze enemies</li>
+          <li>Time of day</li>
+          <li>Game's own cheat flags as checkboxes</li>
+        </ul></div>
+        <div class="fbox"><h4>Items <span>04</span></h4><ul>
+          <li>Quick buttons: sticks, rocks, rope</li>
+          <li>Medicine and weapons</li>
+          <li>Bring items</li>
+        </ul></div>
+        <div class="fbox"><h4>Console <span>05</span></h4><ul>
+          <li>Finds the game's dev commands automatically</li>
+          <li>Run any command from the menu</li>
+        </ul></div>
+        <div class="fbox"><h4>Menu / Config <span>06</span></h4><ul>
+          <li>Open menu <kbd>INSERT</kbd></li>
+          <li>Rebind every key</li>
+          <li>Save / load config</li>
+          <li>7 colour themes</li>
+          <li>Menu size 100–150 %</li>
+          <li>Keybind list, watermark, event log</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- SotF -->
+    <div class="panel" id="p-sotf">
+      <div class="modes">
+        <div class="mode"><h5>Memory mode <span class="pill ok">Default</span></h5>
+          <p>No BepInEx, nothing written to the game folder. Attaches to the running game and uses its own developer console.</p></div>
+        <div class="mode"><h5>BepInEx plugin <span class="pill red">Full menu</span></h5>
+          <p>Installs the in-game menu as a BepInEx 6 plugin that loads with the game. The loader downloads BepInEx for you.</p></div>
+      </div>
+      <div class="fgrid">
+        <div class="fbox"><h4>Memory · Trainer <span>01</span></h4><ul>
+          <li>God mode</li>
+          <li>Fast running</li>
+          <li>Give all items</li>
+          <li>Every dev command in the game</li>
+          <li>Arguments (on / off, item id…)</li>
+          <li>Double-click to run</li>
+        </ul></div>
+        <div class="fbox"><h4>Plugin · Movement <span>02</span></h4><ul>
+          <li>Fly <kbd>F</kbd></li>
+          <li>Noclip <kbd>N</kbd></li>
+          <li>Teleport <kbd>T</kbd></li>
+          <li>Zoom <kbd>Z</kbd></li>
+        </ul></div>
+        <div class="fbox"><h4>Plugin · Visuals <span>03</span></h4><ul>
+          <li>ESP <kbd>F7</kbd></li>
+          <li>Cannibals, mutants, animals</li>
+          <li>Kelvin &amp; Virginia (own colour)</li>
+          <li>Radar</li>
+          <li class="no">Chams</li>
+        </ul></div>
+        <div class="fbox"><h4>Plugin · Items <span>04</span></h4><ul>
+          <li>Item list read from the game</li>
+          <li class="no">Bring ground items</li>
+        </ul></div>
+        <div class="fbox"><h4>Plugin · Console <span>05</span></h4><ul>
+          <li>Game's dev commands, found automatically</li>
+          <li>God mode / give all items / kill all enemies shortcuts (if the game has them)</li>
+        </ul></div>
+        <div class="fbox"><h4>Plugin · Config <span>06</span></h4><ul>
+          <li>Open menu <kbd>INSERT</kbd></li>
+          <li>Config + rebindable keys</li>
+          <li class="no">Time of day</li>
+        </ul></div>
+      </div>
+      <div class="note"><b>Memory mode</b> has no in-game menu, ESP or fly — it runs the game's own commands. For ESP and fly, use the <b>BepInEx plugin</b> mode. Crossed-out features aren't in SotF yet.</div>
+    </div>
+
+    <!-- Phasmo -->
+    <div class="panel" id="p-ph">
+      <div class="fgrid">
+        <div class="fbox"><h4>ESP <span>01</span></h4><ul>
+          <li>Ghost, players, equipment</li>
+          <li>Cursed items, evidence, fuse box</li>
+          <li>Doors and props</li>
+          <li>Box: full / corners / 3D / filled</li>
+          <li>Glow, head dot, snaplines</li>
+          <li>Off-screen arrows, labels, fade</li>
+          <li>Colours: static / rainbow / distance / per type</li>
+        </ul></div>
+        <div class="fbox"><h4>Ghost <span>02</span></h4><ul>
+          <li>Ghost box + skeleton (classic / bold)</li>
+          <li>View direction + movement trail</li>
+          <li>Ghost type banner</li>
+          <li>Info panel (evidence + tell)</li>
+          <li>Speed + activity log</li>
+          <li>Hunt warning + beep</li>
+        </ul></div>
+        <div class="fbox"><h4>Radar <span>03</span></h4><ul>
+          <li>Square or circle</li>
+          <li>Rotate with view or north-up</li>
+          <li>View cone and grid</li>
+          <li>Ghost label</li>
+        </ul></div>
+        <div class="fbox"><h4>Misc <span>04</span></h4><ul>
+          <li>Crosshair + FPS</li>
+          <li>Stream proof (OBS / Discord)</li>
+          <li>Text size + FOV</li>
+          <li>Next camera <kbd>F5</kbd></li>
+          <li>Performance mode (Light)</li>
+        </ul></div>
+        <div class="fbox"><h4>Keys <span>05</span></h4><ul>
+          <li>Menu <kbd>INSERT</kbd></li>
+          <li>ESP on / off <kbd>DELETE</kbd></li>
+          <li>Next camera <kbd>F5</kbd></li>
+          <li>Quit <kbd>END</kbd></li>
+        </ul></div>
+        <div class="fbox"><h4>Loader <span>06</span></h4><ul>
+          <li>One standalone exe</li>
+          <li>Runs as admin automatically</li>
+          <li>Desktop shortcut</li>
+          <li>Offset files ready to download</li>
+          <li>Never writes to game memory</li>
+        </ul></div>
+      </div>
+      <div class="note"><b>Online support.</b> Phasmophobia has an online <b>Safety</b> lock. Disable it in the <b>MISC</b> tab before using the ESP online.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSTALL ================= -->
+<section id="install">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// install</div><h2>How to use</h2></div>
+      <p>Pick a game. Takes about a minute.</p>
+    </div>
+
+    <div class="install-switch">
+      <span class="chip on" data-inst="tf">The Forest</span>
+      <span class="chip" data-inst="sotfm">SotF · Memory</span>
+      <span class="chip" data-inst="sotfb">SotF · BepInEx</span>
+      <span class="chip" data-inst="ph">Phasmophobia</span>
+    </div>
+
+    <div class="steps inst on" id="i-tf">
+      <div class="step"><div class="n">01</div><div><h6>Download &amp; run</h6><p>Download the Forest loader and run it. Pick <b>The Forest</b> in the list on the left.</p></div></div>
+      <div class="step"><div class="n">02</div><div><h6>Start the game</h6><p>Launch The Forest and load a save.</p></div></div>
+      <div class="step"><div class="n">03</div><div><h6>Inject</h6><p>Click <b>inject</b>. The menu loads straight into the running game.</p></div></div>
+      <div class="step"><div class="n">04</div><div><h6>Open the menu</h6><p>Press <span class="k">INSERT</span> in-game.</p></div></div>
+    </div>
+
+    <div class="steps inst" id="i-sotfm" style="display:none">
+      <div class="step"><div class="n">01</div><div><h6>Download &amp; run</h6><p>Run the Forest loader and pick <b>Sons of the Forest</b>. Leave the mode on <b>memory</b> (default).</p></div></div>
+      <div class="step"><div class="n">02</div><div><h6>Start the game</h6><p>Launch Sons of the Forest and load a save.</p></div></div>
+      <div class="step"><div class="n">03</div><div><h6>Attach</h6><p>Click <b>attach</b>. Nothing is installed or written to the game folder.</p></div></div>
+      <div class="step"><div class="n">04</div><div><h6>Use the trainer</h6><p>Open the <b>trainer</b> tab: shortcuts on the left, every dev command on the right. Type an argument if needed and click <b>run</b>, or double-click to run without one.</p></div></div>
+    </div>
+
+    <div class="steps inst" id="i-sotfb" style="display:none">
+      <div class="step"><div class="n">01</div><div><h6>Switch mode</h6><p>In the loader, pick <b>Sons of the Forest</b> and switch the mode to <b>bepinex plugin</b>.</p></div></div>
+      <div class="step"><div class="n">02</div><div><h6>Install</h6><p>Close the game and click <b>install</b>. BepInEx 6 IL2CPP (<code>be.755</code>) is downloaded into the game folder.</p></div></div>
+      <div class="step"><div class="n">03</div><div><h6>First run only</h6><p>BepInEx has to run the game once. Wait for the main menu (1–3 min), close the game, then click <b>install</b> again.</p></div></div>
+      <div class="step"><div class="n">04</div><div><h6>Play</h6><p>Start the game, load a save and press <span class="k">INSERT</span>. <b>Uninstall</b> removes the menu (BepInEx stays).</p></div></div>
+    </div>
+
+    <div class="steps inst" id="i-ph" style="display:none">
+      <div class="step"><div class="n">01</div><div><h6>Download &amp; run</h6><p>Run the Phasmophobia loader. It asks for admin and puts a shortcut on your desktop.</p></div></div>
+      <div class="step"><div class="n">02</div><div><h6>Generate offsets</h6><p>Only needed the first time and after a <b>new Phasmophobia update</b>. Download the offset files from <a href="#offsets" class="red">Offsets</a>, unzip them into a folder, click <b>GENERATE OFFSETS</b> in the loader and pick that folder. New files are posted here when the game updates.</p></div></div>
+      <div class="step"><div class="n">03</div><div><h6>Window mode</h6><p>Set Phasmophobia to <b>borderless</b> or <b>windowed</b> — exclusive fullscreen hides overlays.</p></div></div>
+      <div class="step"><div class="n">04</div><div><h6>Launch</h6><p>Click <b>LAUNCH ESP</b>, start a contract, disable the <b>Safety</b> lock in the <b>MISC</b> tab, and press <span class="k">INSERT</span> for the menu.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHANGELOG ================= -->
+<section id="changelog">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// changelog</div><h2>Updates</h2></div>
+      <p>Latest changes to every loader.</p>
+    </div>
+    <div class="log">
+      <div class="entry">
+        <div class="eh"><span class="v">Forest Menu v3.2</span><span class="pill warn">SotF</span><span class="g">The Forest + Sons of the Forest</span></div>
+        <ul>
+          <li><em class="add">ADD</em>SotF memory mode — no BepInEx needed, runs the game's own dev commands</li>
+          <li><em class="add">ADD</em>Trainer tab with god mode, fast running and give all items shortcuts</li>
+          <li><em class="chg">CHG</em>BepInEx plugin is now an optional second mode</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="v">Phasmo ESP v3.0</span><span class="pill ok">Phasmophobia</span><span class="g">Major update</span></div>
+        <ul>
+          <li><em class="add">ADD</em>New loader: one standalone exe, auto admin, desktop shortcut</li>
+          <li><em class="add">ADD</em>Menu with ESP, GHOST, RADAR and MISC tabs</li>
+          <li><em class="add">ADD</em>Ghost skeleton, type banner, info panel and hunt warning</li>
+          <li><em class="add">ADD</em>Stream proof mode</li>
+          <li><em class="chg">CHG</em>Everything in English</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="v">Forest Menu v3.1</span><span class="pill ok">The Forest</span><span class="g">SotF support</span></div>
+        <ul>
+          <li><em class="add">ADD</em>Sons of the Forest support (BepInEx 6 plugin)</li>
+          <li><em class="add">ADD</em>Pick the game in the loader</li>
+          <li><em class="chg">CHG</em>Everything in English</li>
+          <li><em class="fix">FIX</em>Freeze enemies build error</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="v">Forest Menu v3.0</span><span class="pill ok">The Forest</span><span class="g">Rework</span></div>
+        <ul>
+          <li><em class="add">ADD</em>3 fly methods + live debug box</li>
+          <li><em class="add">ADD</em>Chams, radar, enemy warning, zoom</li>
+          <li><em class="add">ADD</em>Game's own cheat flags, dev console, quick items</li>
+          <li><em class="add">ADD</em>Config, rebindable keys, 7 themes</li>
+          <li><em class="chg">CHG</em>New menu design</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="eh"><span class="v">Phasmo ESP v1</span><span class="pill ok">Phasmophobia</span><span class="g">First release</span></div>
+        <ul>
+          <li><em class="add">ADD</em>Green boxes on ghost, players, items and objects</li>
+          <li><em class="add">ADD</em>Online contract support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OFFSETS ================= -->
+<section id="offsets">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// offsets</div><h2>Phasmophobia offsets</h2></div>
+      <p>Only needed on first setup and after a new game update. You don't have to run Il2CppDumper yourself.</p>
+    </div>
+    <div class="off">
+      <div class="off-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <h3>Offset files</h3><span class="pill ok">&#9679; Latest game update</span>
+        </div>
+        <p>Il2CppDumper output for the current Phasmophobia version. New files are posted here whenever the game updates.</p>
+        <ul class="off-files">
+          <li><span>dump.cs</span><span>in zip</span></li>
+          <li><span>script.json</span><span>in zip</span></li>
+        </ul>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <a class="btn primary dl" data-file="offsets">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
+            Download offsets
+          </a>
+          <span class="mono" style="font-size:11.5px;color:var(--mute)">phasmo-offsets.zip &middot; 18 MB</span>
+        </div>
+      </div>
+      <div class="off-side">
+        <b>How to use</b>
+        <ol>
+          <li>Download and unzip <code>phasmo-offsets.zip</code> into a folder.</li>
+          <li>Open the loader and click <b>GENERATE OFFSETS</b>.</li>
+          <li>Pick the folder with <code>dump.cs</code> and <code>script.json</code>.</li>
+          <li>Click <b>LAUNCH ESP</b>.</li>
+        </ol>
+        <p style="margin-top:12px">Already set up? You only do this again after a <b>new Phasmophobia update</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sh">
+      <div><div class="eyebrow">// faq</div><h2>Questions</h2></div>
+    </div>
+    <div class="faq">
+      <details><summary>Does it work online?</summary><p>Yes. The Forest and Sons of the Forest support multiplayer without an online lock. Phasmophobia also supports multiplayer, but its <b>Safety</b> lock must be disabled in the <b>MISC</b> tab first.</p></details>
+      <details><summary>Is it free?</summary><p>Yes. No key, no account. Just download and run.</p></details>
+      <details><summary>My antivirus flags the exe</summary><p>New unsigned exe files often get flagged. That's a false positive — add an exception if Windows or your antivirus blocks it.</p></details>
+      <details><summary>Why does it ask for admin?</summary><p>The loaders read the game's memory, which needs admin rights on most PCs.</p></details>
+      <details><summary>Phasmophobia boxes don't line up</summary><p>Set MISC → FOV to your in-game FOV. If the boxes follow the wrong view, press F5 to switch camera.</p></details>
+      <details><summary>The ESP stopped after a Phasmo update</summary><p>The game's class names change every update. Download the new offset files from the Offsets section and run GENERATE OFFSETS again.</p></details>
+      <details><summary>Fly doesn't work in The Forest</summary><p>Open the movement tab and watch the debug box while flying. If "reset by game" keeps climbing, switch the fly method or the moved object.</p></details>
+      <details><summary>Why are some SotF features missing?</summary><p>Sons of the Forest is built differently (IL2CPP). Chams and time of day aren't in SotF yet, and memory mode only runs the game's own commands.</p></details>
+      <details><summary>Game folder not found</summary><p>Pick the game folder manually under settings in the Forest loader.</p></details>
+      <details><summary>Exclusive fullscreen hides the overlay</summary><p>Overlays can't draw over exclusive fullscreen. Set Phasmophobia to borderless or windowed.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap fwrap">
+    <div>
+      <img class="fbanner" src="assets/banner.png" alt="mochithedev">
+      <p class="disc">Use at your own risk. All three games support multiplayer. Only Phasmophobia has an online Safety lock, which can be disabled in the MISC tab. MochiCheats is not affiliated with, endorsed by, or connected to Endnight Games or Kinetic Games. All game names are trademarks of their respective owners.</p>
+    </div>
+    <div class="fr">made by <span class="red">MochiTheDev</span><br>© <span id="yr"></span> MochiCheats</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   DOWNLOAD FILES — change these to your real exe file names.
+   They must sit in the same folder as this index.html.
+   ============================================================ */
+const FILES = {
+  forest:  "https://github.com/MochiTheDeveloper/MochiCheats/releases/download/Cheats/MochiTheDevForest.exe",
+  phasmo:  "https://github.com/MochiTheDeveloper/MochiCheats/releases/download/Cheats/MochiTheDevPhasmo.exe",
+  offsets: "offsets/phasmo-offsets.zip"
+};
+
+/* ============================================================
+   YOUTUBE - paste your video link or ID here, e.g.
+   "https://youtu.be/XXXXXXXXXXX" or "https://www.youtube.com/watch?v=XXXXXXXXXXX".
+   Leave it empty to show the "coming soon" box.
+   ============================================================ */
+const YOUTUBE = "https://youtu.be/-ibdJzmI4pQ";
+const YOUTUBE_CAPTION = "mochithedev";
+
+document.querySelectorAll(".dl").forEach(a => {
+  const f = FILES[a.dataset.file];
+  a.href = f;
+  a.addEventListener("click", () => toast("starting download..."));
+});
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = "> " + msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* feature tabs */
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.id === "p-" + b.dataset.tab));
+}));
+
+/* install switch */
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+  document.querySelectorAll(".inst").forEach(s => s.style.display = s.id === "i-" + c.dataset.inst ? "grid" : "none");
+}));
+
+/* youtube embed */
+(function(){
+  const m = YOUTUBE.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/) || YOUTUBE.match(/^([\w-]{11})$/);
+  document.getElementById("ytCap").textContent = YOUTUBE_CAPTION;
+  if (!m) return;
+  document.getElementById("ytBox").innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${m[1]}?rel=0" title="Showcase video" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+})();
+
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
