@@ -466,8 +466,9 @@
           <li>Cursed items, evidence, fuse box</li>
           <li>Doors and props</li>
           <li>Box: full / corners / 3D / filled</li>
-          <li>Glow, head dot, snaplines</li>
+          <li>Glow, head dot, snaplines (solid / dashed)</li>
           <li>Off-screen arrows, labels, fade</li>
+          <li>Max distance / max objects, distance in feet</li>
           <li>Colours: static / rainbow / distance / per type</li>
         </ul></div>
         <div class="fbox"><h4>Ghost <span>02</span></h4><ul>
@@ -475,8 +476,9 @@
           <li>View direction + movement trail</li>
           <li>Ghost type banner</li>
           <li>Info panel (evidence + tell)</li>
-          <li>Speed + activity log</li>
+          <li>Speed meter + activity log</li>
           <li>Hunt warning + beep</li>
+          <li>Auto-learns ghost type and state</li>
         </ul></div>
         <div class="fbox"><h4>Radar <span>03</span></h4><ul>
           <li>Square or circle</li>
@@ -485,24 +487,33 @@
           <li>Ghost label</li>
         </ul></div>
         <div class="fbox"><h4>Misc <span>04</span></h4><ul>
-          <li>Crosshair + FPS</li>
+          <li>Crosshair (dot / cross) + FPS</li>
           <li>Stream proof (OBS / Discord)</li>
+          <li>Discord "Playing" status</li>
           <li>Text size + FOV</li>
           <li>Next camera <kbd>F5</kbd></li>
-          <li>Performance mode (Light)</li>
+          <li>Performance mode (Quality / Light)</li>
+          <li>Profiles: save / new / delete</li>
         </ul></div>
-        <div class="fbox"><h4>Keys <span>05</span></h4><ul>
+        <div class="fbox"><h4>Offline hacks <span>05</span></h4><ul>
+          <li>Speed hack (1–8x)</li>
+          <li>Lock sanity (0–100 %)</li>
+          <li>Set ghost speed / freeze ghost</li>
+          <li>Ignore online lock (own risk)</li>
+        </ul></div>
+        <div class="fbox"><h4>Keys <span>06</span></h4><ul>
           <li>Menu <kbd>INSERT</kbd></li>
           <li>ESP on / off <kbd>DELETE</kbd></li>
           <li>Next camera <kbd>F5</kbd></li>
+          <li>Panic (hide everything) <kbd>F8</kbd></li>
           <li>Quit <kbd>END</kbd></li>
         </ul></div>
-        <div class="fbox"><h4>Loader <span>06</span></h4><ul>
+        <div class="fbox"><h4>Loader <span>07</span></h4><ul>
           <li>One standalone exe</li>
           <li>Runs as admin automatically</li>
           <li>Desktop shortcut</li>
-          <li>Offset files ready to download</li>
-          <li>Never writes to game memory</li>
+          <li>Built-in offsets for the current game version</li>
+          <li>Offset files ready to download after game updates</li>
         </ul></div>
       </div>
       <div class="note"><b>Online support.</b> Phasmophobia has an online <b>Safety</b> lock. Disable it in the <b>MISC</b> tab before using the ESP online.</div>
@@ -574,10 +585,24 @@
       <div class="entry">
         <div class="eh"><span class="v">Phasmo ESP v3.0</span><span class="pill ok">Phasmophobia</span><span class="g">Major update</span></div>
         <ul>
-          <li><em class="add">ADD</em>New loader: one standalone exe, auto admin, desktop shortcut</li>
-          <li><em class="add">ADD</em>Menu with ESP, GHOST, RADAR and MISC tabs</li>
-          <li><em class="add">ADD</em>Ghost skeleton, type banner, info panel and hunt warning</li>
-          <li><em class="add">ADD</em>Stream proof mode</li>
+          <li><em class="add">ADD</em>New loader: one standalone exe (PyArmor + PyInstaller), auto admin, desktop shortcut</li>
+          <li><em class="add">ADD</em>Built-in offsets for the current game version — click LAUNCH ESP right away, GENERATE OFFSETS only after a game update</li>
+          <li><em class="add">ADD</em>Menu with ESP, GHOST, RADAR and MISC tabs — left click = next, right click = previous</li>
+          <li><em class="add">ADD</em>Ghost skeleton (classic / bold), view direction, movement trail, type banner, info panel (evidence + tell), speed meter, activity log</li>
+          <li><em class="add">ADD</em>Hunt warning + beep</li>
+          <li><em class="add">ADD</em>Box styles: full / corners / 3D / filled, glow, head dot, off-screen arrows, label background, fade far objects</li>
+          <li><em class="add">ADD</em>Snaplines: from bottom / center, solid or dashed, thickness, ghost only</li>
+          <li><em class="add">ADD</em>Colour modes: static / rainbow / distance / per type</li>
+          <li><em class="add">ADD</em>Filters: max distance, max objects, hide names past X m, distance in feet</li>
+          <li><em class="add">ADD</em>Radar: square or circle, rotate with view or north-up, range, size, view cone, grid, ghost label</li>
+          <li><em class="add">ADD</em>Speed hack (multiplier 1–8x), lock sanity (0–100 %), set ghost speed / freeze ghost — offline only</li>
+          <li><em class="add">ADD</em>Profiles: save, load, create and delete setups</li>
+          <li><em class="add">ADD</em>Stream proof (hide from OBS / Discord), panic key <kbd>F8</kbd>, Discord "Playing" status</li>
+          <li><em class="add">ADD</em>Crosshair (dot / cross), FPS counter, text size, FOV slider, next camera <kbd>F5</kbd></li>
+          <li><em class="add">ADD</em>Performance mode: Quality / Light (fewer reads, less input delay)</li>
+          <li><em class="add">ADD</em>Auto-learning: ghost type learned once, ghost state (wander / hunt / door) learned in about a minute, re-learn buttons</li>
+          <li><em class="add">ADD</em>Ignore online lock toggle (MISC → Unlock, your own risk)</li>
+          <li><em class="chg">CHG</em>Settings now saved in <code>%LOCALAPPDATA%\MochiTheDev</code></li>
           <li><em class="chg">CHG</em>Everything in English</li>
         </ul>
       </div>
